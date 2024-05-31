@@ -5,7 +5,12 @@ class AuthController extends Controller
 {
   public function daftar()
   {
-    $this->view('register');
+    $this->view('auth/register');
+  }
+
+  public function masuk()
+  {
+    $this->view('auth/login');
   }
   public function register()
   {
@@ -47,7 +52,7 @@ class AuthController extends Controller
       $user->PhoneNumber = $_POST['phone'];
 
       if ($user->save()) {
-        header('Location: /public/index.php?url=auth/login');
+        header('Location: ' . BASE_URL . '?url=auth/login');
         exit;
       } else {
         $errors[] = 'Failed to register user';
@@ -80,11 +85,15 @@ class AuthController extends Controller
 
       $user = User::findByEmail($_POST['email']);
       if ($user && password_verify($_POST['password'], $user->Password)) {
-        session_start();
-        $_SESSION['user_id'] = $user->UserID;
+        // session_set_cookie_params(60);
+        // ini_set('session.gc_maxlifetime', 60);
+        session_start([
+          'cookie_lifetime' => 60,
+        ]);
+        $_SESSION['user_id'] = $user->id;
         $_SESSION['user_name'] = $user->Name;
         $_SESSION['is_admin'] = $user->IsAdmin;
-        header('Location: /public/index.php?url=dashboard');
+        header('Location: '. BASE_URL.'?url=Vaksin');
         exit;
       } else {
         $errors[] = 'Invalid email or password';
@@ -99,7 +108,7 @@ class AuthController extends Controller
   {
     session_start();
     session_destroy();
-    header('Location: /public/index.php?url=auth/login');
+    header('Location: '. BASE_URL.'?url=Home');
     exit;
   }
 }

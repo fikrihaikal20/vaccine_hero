@@ -7,8 +7,15 @@ require_once '../app/models/EWallet.php';
 
 class PemesananController extends Controller {
     public function index() {
-        $pemesanan = Pemesanan::all();
-        $this->view('pemesanan/index', ['pemesanan' => $pemesanan]);
+        if (isset($_GET['id'])) {
+            $id = $_GET['id'];
+            $vaksin = Vaksin::find($id);
+            $ewallets = EWallet::all();
+            $this->view('pemesanan/index', ['vaksin' => $vaksin, 'ewallets' => $ewallets]);
+        } else {
+            // Handle case where ID is not provided
+            header('Location: ' . BASE_URL . 'vaksin');
+        }
     }
 
     public function create() {

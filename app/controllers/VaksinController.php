@@ -5,7 +5,7 @@ require_once '../app/models/Vaksin.php';
 class VaksinController extends Controller {
     public function index() {
         $vaksins = Vaksin::all();
-        $this->view('vaksin/index', ['vaksins' => $vaksins]);
+        $this->view('Vaksin/index', ['vaksins' => $vaksins]);
     }
 
     public function create() {
