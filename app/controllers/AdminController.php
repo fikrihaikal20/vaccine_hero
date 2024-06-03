@@ -4,6 +4,7 @@ require_once '../app/models/EWallet.php';
 require_once '../app/models/Pemesanan.php';
 require_once '../app/models/User.php';
 require_once '../app/models/Vaksin.php';
+require_once '../app/models/SertifikatVaksin.php';
 
 class AdminController extends Controller {
     public function index() {
@@ -149,5 +150,116 @@ class AdminController extends Controller {
     public function delete_vaksin($id) {
         Vaksin::delete($id);
         header('Location: ' . BASE_URL . '?url=admin/vaksin');
+    }
+
+
+    // sertif vaksin
+    public function sertif() {
+        $sertifikatVaksin = SertifikatVaksin::all();
+        $this->view('admin/sertif', ['sertifikatVaksin' => $sertifikatVaksin]);
+    }
+
+    public function create_sertif() {
+        $pemesanan = Pemesanan::all();
+        $this->view('admin/sertif/create', ['pemesanan' => $pemesanan]);
+    }
+
+    public function store_sertif() {
+        $errors = [];
+    
+        if (empty($_POST['pemesanan_id'])) {
+            $errors[] = 'Pemesanan is required';
+        }
+        if (empty($_POST['issued_date'])) {
+            $errors[] = 'Issued Date is required';
+        }
+        if (empty($_POST['expiry_date'])) {
+            $errors[] = 'Expiry Date is required';
+        }
+        // Check if a file was uploaded
+        if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+            $errors[] = 'File upload is required';
+        }
+    
+        if (!empty($errors)) {
+            $pemesanan = Pemesanan::all();
+            $this->view('admin/sertif/create', ['errors' => $errors, 'pemesanan' => $pemesanan]);
+            return;
+        }
+    
+        // Handle file upload
+        $uploadDir = 'uploads/';
+        $uploadedFile = $_FILES['file'];
+        $fileName = basename($uploadedFile['name']);
+        $targetFilePath = $uploadDir . $fileName;
+    
+        // Ensure the upload directory exists
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+    
+        if (move_uploaded_file($uploadedFile['tmp_name'], $targetFilePath)) {
+            $fileUrl = BASE_URL . '/' . $targetFilePath;
+    
+            $sertifikatVaksin = new SertifikatVaksin();
+            $sertifikatVaksin->PemesananID = $_POST['pemesanan_id'];
+            $sertifikatVaksin->IssuedDate = $_POST['issued_date'];
+            $sertifikatVaksin->ExpiryDate = $_POST['expiry_date'];
+            $sertifikatVaksin->VerificationStatus = false;
+            $sertifikatVaksin->Url = $fileUrl;
+            $sertifikatVaksin->save();
+    
+            header('Location: ' . BASE_URL . '?url=admin/sertif/');
+        } else {
+            $errors[] = 'There was an error uploading the file';
+            $pemesanan = Pemesanan::all();
+            $this->view('admin/sertif/create', ['errors' => $errors, 'pemesanan' => $pemesanan]);
+        }
+    }
+    
+
+    public function edit_sertif($id) {
+        $sertifikatVaksin = SertifikatVaksin::find($id);
+        $pemesanan = Pemesanan::all();
+        $this->view('sertifikat_vaksin/edit', ['sertifikatVaksin' => $sertifikatVaksin, 'pemesanan' => $pemesanan]);
+    }
+
+    public function update_sertif($id) {
+        $errors = [];
+
+        if (empty($_POST['pemesanan_id'])) {
+            $errors[] = 'Pemesanan is required';
+        }
+        if (empty($_POST['issued_date'])) {
+            $errors[] = 'Issued Date is required';
+        }
+        if (empty($_POST['expiry_date'])) {
+            $errors[] = 'Expiry Date is required';
+        }
+        if (empty($_POST['url'])) {
+            $errors[] = 'URL is required';
+        }
+
+        if (!empty($errors)) {
+            $sertifikatVaksin = SertifikatVaksin::find($id);
+            $pemesanan = Pemesanan::all();
+            $this->view('sertifikat_vaksin/edit', ['errors' => $errors, 'sertifikatVaksin' => $sertifikatVaksin, 'pemesanan' => $pemesanan]);
+            return;
+        }
+
+        $sertifikatVaksin = SertifikatVaksin::find($id);
+        $sertifikatVaksin->PemesananID = $_POST['pemesanan_id'];
+        $sertifikatVaksin->IssuedDate = $_POST['issued_date'];
+        $sertifikatVaksin->ExpiryDate = $_POST['expiry_date'];
+        $sertifikatVaksin->VerificationStatus = isset($_POST['verification_status']);
+        $sertifikatVaksin->Url = $_POST['url'];
+        $sertifikatVaksin->save();
+
+        header('Location: ' . BASE_URL . 'sertifikat_vaksin');
+    }
+
+    public function delete_sertif($id) {
+        SertifikatVaksin::delete($id);
+        header('Location: ' . BASE_URL . 'sertifikat_vaksin');
     }
 }

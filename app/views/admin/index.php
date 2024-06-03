@@ -35,9 +35,9 @@ include "includes/head.php";
       <div class="row">
         <div class="card" style="width: 25rem;margin-top: 20px ;margin-right: 200px ;">
           <div class="card-body">
-            <h5 class="card-title">Pengguna</h5>
-            <p class="card-text">Menampilkan dan merubah detail pengguna.</p>
-            <a href="<?= BASE_URL ?>?url=admin/user" class="btn btn-primary">Kelola Pengguna</a>
+            <h5 class="card-title">Sertifikat Vaksin</h5>
+            <p class="card-text">Manajemen sertifikat</p>
+            <a href="<?= BASE_URL ?>?url=admin/sertif" class="btn btn-primary">Kelola Pengguna</a>
           </div>
         </div>
         <div class="card" style="width: 25rem;margin-top: 20px ;">

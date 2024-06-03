@@ -70,7 +70,9 @@ include (dirname(__DIR__) . '/includes/head.php');
           </div>
         </div>
         <div class="col-6">
-          <form class="form" action="#">
+          <form class="form" action="<?= BASE_URL ?>?url=Pemesanan/store" method="POST">
+            <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?>">
+            <input type="hidden" name="vaksin_id" value="<?= $data['vaksin']->id ?>">
             <div class="row ">
               <!-- Waktu -->
               <div class="col-12">
