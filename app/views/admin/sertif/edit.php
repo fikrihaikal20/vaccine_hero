@@ -18,7 +18,7 @@ include (dirname(__DIR__) . '/includes/head.php');
       <div class="row align-items-start">
         <div class="col">
           <br>
-          <h2>Add Vaksin</h2>
+          <h2>Edit Sertif</h2>
           <br>
         </div>
         <div class="col">
@@ -26,29 +26,44 @@ include (dirname(__DIR__) . '/includes/head.php');
       </div>
     </div>
 
-    <h2>Edit Product Details</h2>
-    <form action="<?= BASE_URL ?>?url=admin/update_vaksin/<?php echo $data['vaksin']->id ?>" method="POST">
-    <div class="form-group mb-3">
-        <label>Vaksin name</label>
-        <input id="exampleInputText1" type="text" class="form-control" value="<?= htmlspecialchars($data['vaksin']->Name) ?>" placeholder="Enter vaksin name" name="name">
-        <div class="form-text">Please enter the vaksin name in range (1-25) characters, special characters not allowed!</div>
-    </div>
-    <div class="form-group">
-        <label>Deskripsi</label>
-        <input id="validationTooltip01" type="text" class="form-control" value="<?= htmlspecialchars($data['vaksin']->Description) ?>" placeholder="Enter description" name="description">
-        <div class="form-text">Please enter the description in range (1-25) characters, special characters not allowed!</div>
-    </div>
-    <div class="form-group">
-        <label>Manufacturer</label>
-        <input id="validationTooltip01" type="text" class="form-control" value="<?= htmlspecialchars($data['vaksin']->Manufacturer) ?>" placeholder="Enter manufacturer" name="manufacturer">
-        <div class="form-text">Please enter manufacturer for the product in range (1-250) characters, special characters not allowed!</div>
-    </div>
-    <br>
-    <button type="submit" class="btn btn-outline-primary" value="update" name="add_item">Submit</button>
-    <button type="submit" class="btn btn-outline-danger" value="cancel" name="cancel">Cancel</button>
-    <br><br>
-</form>
+    <form action="<?= BASE_URL ?>?url=admin/update_sertif" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="sertif_id" value="<?= $data['sertifikatVaksin']->id ?>">
+      <div class="form-group">
+        <label for="pemesanan_id">Select pemesanan id</label>
+        <select id="pemesanan_id" name="pemesanan_id" class="form-control wide" required>
+          <option value="" disabled>Select Pemesanan</option>
+          <?php foreach ($data['pemesanan'] as $pemesanan): ?>
+            <option value="<?= htmlspecialchars($pemesanan->id) ?>"
+              <?= ($pemesanan->id == $data['sertifikatVaksin']->PemesananID) ? 'selected' : '' ?>>
+              <?= htmlspecialchars($pemesanan->id) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
 
+      <div class="form-group">
+        <label for="issued_date">IssuedDate</label>
+        <input type="datetime-local" id="issued_date" value="<?php echo $data['sertifikatVaksin']->IssuedDate ?>"
+          name="issued_date" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="expiry_date">ExpiryDate</label>
+        <input type="datetime-local" id="expiry_date" value="<?php echo $data['sertifikatVaksin']->ExpiryDate ?>"
+          name="expiry_date" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="file">Upload File (Image/PDF)</label>
+        <?php if (!empty($data['sertifikatVaksin']->Url)): ?>
+          <p>Current file: <a href="<?= htmlspecialchars($data['sertifikatVaksin']->Url) ?>"
+              target="_blank"><?= htmlspecialchars($data['sertifikatVaksin']->Url) ?></a></p>
+        <?php endif; ?>
+        <input type="file" id="file" name="file" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+      </div>
+      <br>
+      <button type="submit" class="btn btn-outline-primary" value="update" name="add_item">Submit</button>
+      <button type=" submit" class="btn btn-outline-danger" value="cancel" name="cancel">Cancel</button>
+      <br> <br>
+    </form>
   </main>
   </div>
   </div>
